@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// schema.prisma
+
+model User {
+  id          Int        @id @default(autoincrement())
+  username    String     @unique
+  password    String
+  locations   Location[] // Добавляем обратное поле для связи
+  messagesSent Message[] @relation("Sender")
+  messagesReceived Message[] @relation("Receiver")
+  createdAt   DateTime   @default(now())
+}
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  latitude  Decimal
+  longitude Decimal
+  recordedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  content     String
+  sender      User     @relation("Sender", fields: [senderId], references: [id])
+  senderId    Int
+  receiver    User     @relation("Receiver", fields: [receiverId], references: [id])
+  receiverId  Int
+  createdAt   DateTime @default(now())
+}

@@ -3,6 +3,7 @@ import userRouter from "./routes/user.router";
 import locationRouter from "./routes/location.router";
 import authRouter from "./routes/auth.router";
 import friendshipRouter from "./routes/friendship.router";
+import messageRouter from "./routes/message.router";
 import cookieParser from "cookie-parser";
 
 import { errorMiddleware } from "./middleware/error.middleware";
@@ -17,6 +18,7 @@ app.use("/api/users", userRouter);
 app.use("/api/locations", locationRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/friendship", friendshipRouter);
+app.use("/api/messages", messageRouter);
 
 app.use(errorMiddleware);
 

@@ -1,6 +1,6 @@
 # Backend-zenly
 
-## 1) Init project
+## 1) Create project
 
 #### 1) `yarn init -y`
 
@@ -57,7 +57,16 @@ npx prisma init --datasource-provider postgresql
 ### 4) Init Schema and enter a name for the new migration: zenly_db
 
 ```
-npx prisma init --datasource-provider postgresql
+yarn migrate
 ```
 
 ## 2) Run project `yarn dev`
+
+## 3) Init project
+
+```
+yarn install
+npx prisma db push
+```
+
+add .env file

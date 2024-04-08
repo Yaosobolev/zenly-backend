@@ -1,0 +1,11 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "driver": "PostgreSQL",
+      "name": "db",
+      "connectString": "postgres://zenly_user:MjtncWCC7M1nxFR5JqdCkiaK9aL5yjqH@dpg-cn7lc1q1hbls73ds8tog-a/zenly"
+    }
+  ]
+}

@@ -1,4 +1,8 @@
+import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { setLocation, getLocation } from "../service/location.service";
+
+setLocation;
 
 const locationClient = new PrismaClient().location;
 
@@ -80,5 +84,61 @@ export const deleteLocation = async (req, res) => {
     res.status(200).json({ messsage: "successfully" });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const setLocationRequest = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { latitude, longitude, userId } = req.body;
+  try {
+    const location = await setLocation(
+      latitude,
+      longitude,
+      userId,
+      (result: any) => {
+        if (result instanceof Error) {
+          throw result;
+        } else {
+          res.status(201).json({
+            message: "Координаты установлены",
+            request: result.data.request,
+          });
+        }
+      }
+    );
+  } catch (error) {
+    console.error("Ошибка отправки заявки:", error);
+
+    const statusCode = error.statusCode || 500;
+    res
+      .status(statusCode)
+      .json({ message: error.message || "Внутренняя ошибка сервера" });
+  }
+};
+export const getLocationRequest = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { userId } = req.body;
+  try {
+    const location = await getLocation(userId, (result: any) => {
+      if (result instanceof Error) {
+        throw result;
+      } else {
+        res.status(201).json({
+          message: "Координаты получены",
+          request: result.data.request,
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Ошибка отправки заявки:", error);
+
+    const statusCode = error.statusCode || 500;
+    res
+      .status(statusCode)
+      .json({ message: error.message || "Внутренняя ошибка сервера" });
   }
 };

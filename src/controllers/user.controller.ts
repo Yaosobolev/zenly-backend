@@ -7,7 +7,7 @@ export const getAllUsers = async (req, res) => {
   try {
     const allUsers = await userClient.findMany({
       include: {
-        locations: true,
+        location: true,
       },
     });
 
@@ -26,7 +26,7 @@ export const getUserById = async (req, res) => {
         id: userId,
       },
       include: {
-        locations: true,
+        location: true,
       },
     });
 

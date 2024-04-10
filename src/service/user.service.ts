@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
-import { Request, Response, NextFunction } from "express";
+import { NextFunction } from "express";
 
 const userClient = new PrismaClient().user;
 
@@ -43,7 +43,7 @@ export const getUserByUsername = async (
     const existingUser = await userClient.findUnique({
       where: { username },
       include: {
-        locations: true,
+        location: true,
       },
     });
 
@@ -97,11 +97,27 @@ export const getFriendsById = async (
       where: { id: id },
       include: {
         sentFriendRequests: {
-          include: { receiver: true },
+          include: {
+            receiver: {
+              select: {
+                id: true,
+                username: true,
+                location: { select: { latitude: true, longitude: true } },
+              },
+            },
+          },
           where: { status: "ACCEPTED" },
         },
         receivedFriendRequests: {
-          include: { sender: true },
+          include: {
+            sender: {
+              select: {
+                id: true,
+                username: true,
+                location: { select: { latitude: true, longitude: true } },
+              },
+            },
+          },
           where: { status: "ACCEPTED" },
         },
       },
@@ -121,7 +137,10 @@ export const getFriendsById = async (
     );
     const allFriends = [...sentFriends, ...receivedFriends];
 
-    next({ status: "success", data: { request: allFriends } });
+    next({
+      status: "success",
+      data: { request: allFriends },
+    });
   } catch (error) {
     next(error);
   }

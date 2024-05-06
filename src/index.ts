@@ -5,10 +5,20 @@ import authRouter from "./routes/auth.router";
 import friendshipRouter from "./routes/friendship.router";
 import messageRouter from "./routes/message.router";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import { errorMiddleware } from "./middleware/error.middleware";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
+app.options("*", cors());
+
 app.use(cookieParser());
 const port = process.env.PORT || 3000;
 

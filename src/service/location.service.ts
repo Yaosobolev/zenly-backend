@@ -11,9 +11,9 @@ export const setLocation = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    let existingLocation = await locationClient.findUnique({
+    let existingLocation = await locationClient.findFirst({
       where: {
-        id: userId,
+        userId: userId,
       },
     });
 

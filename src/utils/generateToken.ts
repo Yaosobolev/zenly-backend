@@ -3,9 +3,10 @@ import jwt from "jsonwebtoken";
 
 export const generateAccessTokenAndSetCookie = (
   userId: number,
+  username: string,
   res: Response
 ) => {
-  const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+  const accessToken = jwt.sign({ userId, username }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
 
@@ -19,9 +20,10 @@ export const generateAccessTokenAndSetCookie = (
 
 export const generateRefreshTokenAndSetCookie = (
   userId: number,
+  username: string,
   res: Response
 ) => {
-  const refreshToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+  const refreshToken = jwt.sign({ userId, username }, process.env.JWT_SECRET, {
     expiresIn: "15d",
   });
 

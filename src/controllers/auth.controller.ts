@@ -14,8 +14,16 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       if (result instanceof Error) {
         throw result;
       } else {
-        generateAccessTokenAndSetCookie(result.data.user.id, res);
-        generateRefreshTokenAndSetCookie(result.data.user.id, res);
+        generateAccessTokenAndSetCookie(
+          result.data.user.id,
+          result.data.user.username,
+          res
+        );
+        generateRefreshTokenAndSetCookie(
+          result.data.user.id,
+          result.data.user.username,
+          res
+        );
         res.status(201).json({
           message: "Пользователь успешно зарегистрирован",
           user: result.data.user,
@@ -38,8 +46,17 @@ export const login = async (req: Request, res: Response) => {
       if (result instanceof Error) {
         throw result;
       } else {
-        generateAccessTokenAndSetCookie(result.data.user.id, res);
-        generateRefreshTokenAndSetCookie(result.data.user.id, res);
+        generateAccessTokenAndSetCookie(
+          result.data.user.id,
+          result.data.user.username,
+          res
+        );
+        generateRefreshTokenAndSetCookie(
+          result.data.user.id,
+          result.data.user.username,
+          res
+        );
+        console.log(result.data.user.username);
         res.status(200).json({
           message: "Пользователь успешно авторизировался",
           id: result.data.user.id,
@@ -79,7 +96,11 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
         if (result instanceof Error) {
           throw result;
         } else {
-          generateAccessTokenAndSetCookie(result.data.user, res);
+          generateAccessTokenAndSetCookie(
+            result.data.user,
+            result.data.user.username,
+            res
+          );
           res.status(200).json(result);
         }
       }

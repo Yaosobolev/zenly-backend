@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { PrismaClient, User } from "@prisma/client";
+import { generateAccessTokenAndSetCookie } from "../utils/generateToken";
 
 const userClient = new PrismaClient().user;
 
@@ -10,7 +11,8 @@ export const protectRoute = async (
   next: NextFunction
 ) => {
   try {
-    const refreshToken = req.cookies["refreshToken"];
+    const refreshToken = req.cookies.refreshToken;
+    const accessToken = req.cookies.accessToken;
 
     if (!refreshToken) {
       return res
@@ -36,7 +38,22 @@ export const protectRoute = async (
       return res.status(404).json({ error: "Пользователь не найден" });
     }
 
+    if (!accessToken) {
+      generateAccessTokenAndSetCookie(decoded.userId, decoded.username, res);
+    }
+    if (!req.params.userId) {
+      return res.json({
+        message: "Данные пользователя получены",
+        id: user.id,
+        username: user.username,
+      });
+    }
+
+    if (decoded.userId !== Number(req.params.userId)) {
+      return res.status(403).json({ error: "Доступ запрещен", id: user.id });
+    }
     req.user = user;
+
     next();
   } catch (error) {
     console.log("Error in protectedRout middleware: ", error.message);

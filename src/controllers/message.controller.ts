@@ -8,7 +8,6 @@ export const sendMessageRequest = async (
   const { content } = req.body;
   const { userId: receiverId } = req.params;
   const senderId = req.user.id;
-  console.log(receiverId);
   try {
     const newFriendshipRequest = await sendMessage(
       senderId,
@@ -40,7 +39,6 @@ export const getMessageRequest = async (
 ): Promise<void> => {
   const { userId: userToChatId } = req.params;
   const senderId = req.user.id;
-  console.log(userToChatId);
   try {
     const newFriendshipRequest = await getMessage(
       senderId,

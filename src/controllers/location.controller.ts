@@ -121,13 +121,14 @@ export const getLocationRequest = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { userId } = req.body;
+  const { userId } = req.params;
+
   try {
-    const location = await getLocation(userId, (result: any) => {
+    const location = await getLocation(Number(userId), (result: any) => {
       if (result instanceof Error) {
         throw result;
       } else {
-        res.status(201).json({
+        res.status(200).json({
           message: "Координаты получены",
           request: result.data.request,
         });

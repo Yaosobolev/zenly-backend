@@ -9,6 +9,8 @@ import {
   setLocationRequest,
   getLocationRequest,
 } from "../controllers/location.controller";
+import { isAuthenticate } from "../middleware/auth.middleware";
+import { protectRoute } from "../middleware/protectRoute.middleware";
 
 const locationRouter = Router();
 
@@ -18,6 +20,6 @@ const locationRouter = Router();
 // locationRouter.put("/:id", updateLocation);
 // locationRouter.delete("/:id", deleteLocation);
 locationRouter.post("/", setLocationRequest);
-locationRouter.get("/", getLocationRequest);
+locationRouter.get("/:userId", protectRoute, getLocationRequest);
 
 export default locationRouter;

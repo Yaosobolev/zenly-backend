@@ -73,7 +73,7 @@ export const getUserByUsername = async (
 export const getUserById = async (id: number) => {
   try {
     const existingUser = await userClient.findUnique({
-      where: { id },
+      where: { id: id },
     });
 
     if (!existingUser) {
@@ -83,6 +83,24 @@ export const getUserById = async (id: number) => {
     }
 
     return existingUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getProfile = async (id: number, next: NextFunction) => {
+  try {
+    const existingUser = await userClient.findUnique({
+      where: { id: id },
+    });
+
+    if (!existingUser) {
+      const error = new Error(`Пользователь с ${id} идентификатором не найден`);
+      error["statusCode"] = 404;
+      throw error;
+    }
+
+    next({ status: "success", data: { user: existingUser } });
   } catch (error) {
     throw error;
   }

@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { createUser, getUserByUsername } from "../service/user.service";
+import {
+  createUser,
+  getUserByUsername,
+  getProfile,
+} from "../service/user.service";
 import {
   generateAccessTokenAndSetCookie,
   generateRefreshTokenAndSetCookie,
@@ -56,9 +60,32 @@ export const login = async (req: Request, res: Response) => {
           result.data.user.username,
           res
         );
-        console.log(result.data.user.username);
         res.status(200).json({
           message: "Пользователь успешно авторизировался",
+          id: result.data.user.id,
+          username: result.data.user.username,
+          locations: result.data.user.locations,
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Ошибка авторизации пользователя:", error);
+    const statusCode = error.statusCode || 500;
+    res
+      .status(statusCode)
+      .json({ message: error.message || "Внутренняя ошибка сервера" });
+  }
+};
+export const getDataUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await getProfile(Number(userId), (result: any) => {
+      if (result instanceof Error) {
+        throw result;
+      } else {
+        res.status(200).json({
+          message: "Данные пользователя получены",
           id: result.data.user.id,
           username: result.data.user.username,
           locations: result.data.user.locations,

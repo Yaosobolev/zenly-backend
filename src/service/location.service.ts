@@ -30,7 +30,7 @@ export const setLocation = async (
       // Если запись о местоположении пользователя уже существует, обновляем ее
       existingLocation = await locationClient.update({
         where: {
-          id: userId,
+          userId: userId,
         },
         data: {
           latitude,
@@ -48,10 +48,11 @@ export const getLocation = async (
   userId: number,
   next: NextFunction
 ): Promise<void> => {
+  const convertToNumber = Number(userId);
   try {
     const location = await locationClient.findUnique({
       where: {
-        id: userId,
+        userId: convertToNumber,
       },
     });
 

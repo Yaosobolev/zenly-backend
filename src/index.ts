@@ -7,14 +7,15 @@ import messageRouter from "./routes/message.router";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import http from "http";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 
 import { errorMiddleware } from "./middleware/error.middleware";
 
 const initSocket = require("./socket.ts");
-const ioMiddleware = require("./middleware/io.middleware");
+import { ioMiddleware } from "./middleware/io.middleware";
 
 const app = express();
+const port = process.env.PORT || 3000;
 
 app.use(
   cors({
@@ -27,7 +28,6 @@ app.use(
 app.options("*", cors());
 
 app.use(cookieParser());
-const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -35,11 +35,18 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5174",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
 });
 
+io.on("connection", (socket) => {
+  console.log("hello world!");
+
+  socket.on("hello-server", (data) => {
+    console.log(data);
+  });
+});
 app.use(errorMiddleware);
 
 app.use(ioMiddleware(io));

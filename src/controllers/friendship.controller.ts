@@ -21,10 +21,13 @@ export const sendFriendRequest = async (
 ): Promise<void> => {
   const { senderId, receiverId } = req.body;
 
+  // const { userId } = req.params;
+  console.log(req.params);
+
   // const io= req.io;
   const io = req.io;
 
-  console.log(io);
+  // console.log(io);
   try {
     const newFriendshipRequest = await createFriendRequest(
       senderId,
@@ -33,7 +36,7 @@ export const sendFriendRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
-          io.emit("friend-request", { senderId });
+          io.emit("friend-requests", { result });
           res.status(201).json({
             message: "Заявка отправлена",
             request: result.data.request,

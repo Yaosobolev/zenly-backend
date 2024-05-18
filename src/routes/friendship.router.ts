@@ -9,7 +9,7 @@ import {
 
 const friendshipRouter = Router();
 
-friendshipRouter.post("/send-friend-request", sendFriendRequest);
+friendshipRouter.post("/send-friend-request/:senderid", sendFriendRequest);
 friendshipRouter.post("/accept-request", acceptFriendRequest);
 friendshipRouter.post("/reject-request", rejectFriendRequest);
 friendshipRouter.get("/friends", getAllFriends);

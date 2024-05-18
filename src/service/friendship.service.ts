@@ -12,8 +12,8 @@ export const checkExistingFriendRequest = async (
     const existingRequest = await friendshipClient.findFirst({
       where: {
         AND: [
-          { senderId },
-          { receiverId },
+          { senderId: Number(senderId) },
+          { receiverId: Number(receiverId) },
           {
             OR: [
               { status: "PENDING" },
@@ -41,8 +41,8 @@ export const createFriendRequest = async (
 ): Promise<void> => {
   try {
     // проверка на существование пользователей
-    const sender = await getUserById(senderId);
-    const receiver = await getUserById(receiverId);
+    const sender = await getUserById(Number(senderId));
+    const receiver = await getUserById(Number(receiverId));
 
     const checkFriendRequest = await checkExistingFriendRequest(
       senderId,
@@ -59,8 +59,8 @@ export const createFriendRequest = async (
     }
     const newFriendshipRequest = await friendshipClient.create({
       data: {
-        senderId,
-        receiverId,
+        senderId: Number(senderId),
+        receiverId: Number(receiverId),
         status: "PENDING",
       },
     });

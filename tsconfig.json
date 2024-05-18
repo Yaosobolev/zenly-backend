@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "es2017",
     "lib": ["es2017", "esnext.asynciterable"],
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types", "./types/express/index.d.ts"],
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -20,6 +20,10 @@
     "resolveJsonModule": true,
     "baseUrl": "src"
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/controllers/friendship.controller.js",
+    "src/middleware/io.middleware.js"
+  ],
   "exclude": ["node_modules"]
 }

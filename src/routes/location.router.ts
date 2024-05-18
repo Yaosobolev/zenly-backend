@@ -9,7 +9,7 @@ import {
   setLocationRequest,
   getLocationRequest,
 } from "../controllers/location.controller";
-import { isAuthenticate } from "../middleware/auth.middleware";
+// import { isAuthenticate } from "../middleware/auth.middleware";
 import { protectRoute } from "../middleware/protectRoute.middleware";
 
 const locationRouter = Router();

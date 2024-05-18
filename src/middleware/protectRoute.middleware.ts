@@ -60,3 +60,5 @@ export const protectRoute = async (
     res.status(500).json({ error: "Internal server error" });
   }
 };
+// postgres://zenly_user:8dLMvpaoi2s32t3eRzh7lZFEMuzOoK3G@dpg-cp312e21hbls7386sn80-a/zenlydb2
+// postgres://zenly_user:8dLMvpaoi2s32t3eRzh7lZFEMuzOoK3G@dpg-cp312e21hbls7386sn80-a.oregon-postgres.render.com/zenlydb2

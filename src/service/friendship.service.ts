@@ -94,8 +94,19 @@ export const processFriendRequest = async (
     const updatedFriendshipRequest = await friendshipClient.update({
       where: { id: requestId },
       data: { status: status as FriendshipStatus },
+      select: {
+        id: true,
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            location: true,
+          },
+        },
+        receiverId: true,
+      },
     });
-    next({ status: "success", data: { request: updatedFriendshipRequest } });
+    next(updatedFriendshipRequest);
   } catch (error) {
     next(error);
   }

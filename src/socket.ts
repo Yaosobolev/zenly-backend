@@ -8,10 +8,12 @@ export const getSocketIdByUserId = async (
   return userSocketMap[userId] || null;
 };
 
-export const sendFriendRequestNotification = async (io, receiverId, result) => {
+// sendFriendRequestNotification
+
+export const sendSocketToReceiver = async (io, receiverId, result, address) => {
   const socketId = await getSocketIdByUserId(receiverId);
   if (socketId) {
-    io.to(socketId).emit("friend-requests", {
+    io.to(socketId).emit(address, {
       data: result,
     });
   } else {

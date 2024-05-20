@@ -115,7 +115,8 @@ export const getFriendsById = async (
       where: { id: id },
       include: {
         sentFriendRequests: {
-          include: {
+          select: {
+            id: true,
             receiver: {
               select: {
                 id: true,
@@ -127,7 +128,9 @@ export const getFriendsById = async (
           where: { status: "ACCEPTED" },
         },
         receivedFriendRequests: {
-          include: {
+          select: {
+            id: true,
+
             sender: {
               select: {
                 id: true,
@@ -148,17 +151,14 @@ export const getFriendsById = async (
     }
 
     const sentFriends = existingUser.sentFriendRequests.map(
-      (request) => request.receiver
+      (request) => request
     );
     const receivedFriends = existingUser.receivedFriendRequests.map(
-      (request) => request.sender
+      (request) => request
     );
     const allFriends = [...sentFriends, ...receivedFriends];
 
-    next({
-      status: "success",
-      data: { request: allFriends },
-    });
+    next(allFriends);
   } catch (error) {
     next(error);
   }

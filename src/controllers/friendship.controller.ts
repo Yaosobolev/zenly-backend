@@ -6,7 +6,7 @@ import {
 } from "../service/friendship.service";
 import { getFriendsById, getFriendRequests } from "../service/user.service";
 import { io } from "../index";
-import { sendFriendRequestNotification } from "../socket";
+import { sendSocketToReceiver } from "../socket";
 
 export const sendFriendRequest = async (
   req: Request,
@@ -24,7 +24,7 @@ export const sendFriendRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
-          sendFriendRequestNotification(io, receiverId, result);
+          sendSocketToReceiver(io, receiverId, result, "friend-requests");
 
           res.status(201).json({
             message: "Заявка отправлена",
@@ -73,6 +73,7 @@ export const acceptFriendRequest = async (
   res: Response
 ): Promise<void> => {
   const { requestId } = req.body;
+  console.log(requestId);
   try {
     const updatedRequest = await processFriendRequest(
       requestId,
@@ -81,9 +82,19 @@ export const acceptFriendRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
+          //! ДОРАБОТАТЬ, по итогу дубликат приходит
+          sendSocketToReceiver(
+            io,
+            result.receiverId,
+            result,
+            "friend-requests"
+          );
+
+          sendSocketToReceiver(io, result.sender.id, result, "friend"); //! РЕАЛИЗОВАТЬ
+
           res.status(200).json({
             message: "Заявка принята",
-            request: result.data.request,
+            data: result,
           });
         }
       }
@@ -137,7 +148,7 @@ export const getAllFriends = async (
       } else {
         res.status(200).json({
           message: "Список друзей получен",
-          request: result.data.request,
+          data: result,
         });
       }
     });

@@ -1,45 +1,34 @@
 import { Request, Response } from "express";
 
-import { Request as ExpressRequest } from "express";
-import { Server } from "socket.io";
-
-// Define a custom interface that extends the Express request interface
-
 import {
   createFriendRequest,
   processFriendRequest,
 } from "../service/friendship.service";
-import { getFriendsById } from "../service/user.service";
-
-interface CustomRequest extends ExpressRequest {
-  io: Server; // Add the 'io' property of type Server
-}
+import { getFriendsById, getFriendRequests } from "../service/user.service";
+import { io } from "../index";
+import { sendFriendRequestNotification } from "../socket";
 
 export const sendFriendRequest = async (
-  req: CustomRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
-  const { senderId, receiverId } = req.body;
+  const { receiverId } = req.body;
+  const { senderid } = req.params;
+  const senderId = senderid;
 
-  // const { userId } = req.params;
-  console.log(req.params);
-
-  // const io= req.io;
-  const io = req.io;
-
-  // console.log(io);
   try {
     const newFriendshipRequest = await createFriendRequest(
-      senderId,
-      receiverId,
+      Number(senderId),
+      Number(receiverId),
       (result: any) => {
         if (result instanceof Error) {
           throw result;
         } else {
-          io.emit("friend-requests", { result });
+          sendFriendRequestNotification(io, receiverId, result);
+
           res.status(201).json({
             message: "Заявка отправлена",
-            request: result.data.request,
+            data: result,
           });
         }
       }
@@ -54,34 +43,30 @@ export const sendFriendRequest = async (
   }
 };
 
-// export const sendFriendRequest = async (
-//   socket: Socket,
-//   data: any
-// ): Promise<void> => {
-//   const { senderId, receiverId } = data;
-//   try {
-//     // Отправка запроса о дружбе
-//     const newFriendshipRequest = await createFriendRequest(
-//       senderId,
-//       receiverId,
-//       (result: any) => {
-//         if (result instanceof Error) {
-//           throw result;
-//         } else {
-//           result.json({
-//             message: "Заявка отправлена",
-//             request: result.data.request,
-//           });
-//         }
-//       }
-//     );
-//     // Отправка сообщения о новом запросе всем подключенным клиентам
-//     socket.emit("friendRequest", { senderId, receiverId });
-//   } catch (error) {
-//     console.error("Ошибка отправки заявки:", error);
-//     // Обработка ошибки
-//   }
-// };
+export const getFriendRequest = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { userId } = req.params;
+
+  try {
+    const requests = await getFriendRequests(Number(userId), (result: any) => {
+      if (result instanceof Error) {
+        throw result;
+      } else {
+        res.status(200).json({
+          data: result,
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Ошибка получения друзей:", error);
+    const statusCode = error.statusCode || 500;
+    res
+      .status(statusCode)
+      .json({ message: error.message || "Внутренняя ошибка сервера" });
+  }
+};
 
 export const acceptFriendRequest = async (
   req: Request,

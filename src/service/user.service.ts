@@ -163,3 +163,40 @@ export const getFriendsById = async (
     next(error);
   }
 };
+
+export const getFriendRequests = async (
+  id: number,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const existingUser = await userClient.findUnique({
+      where: { id: id },
+      select: {
+        receivedFriendRequests: {
+          select: {
+            id: true,
+            sender: {
+              select: {
+                id: true,
+                username: true,
+              },
+            },
+          },
+          where: {
+            status: "PENDING",
+          },
+        },
+      },
+    });
+
+    if (!existingUser) {
+      const error = new Error(`Пользователь с ${id} идентификатором не найден`);
+      error["statusCode"] = 404;
+      throw error;
+    }
+
+    next(existingUser.receivedFriendRequests);
+  } catch (error) {
+    next(error);
+  }
+};

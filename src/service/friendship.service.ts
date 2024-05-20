@@ -15,10 +15,7 @@ export const checkExistingFriendRequest = async (
           { senderId: Number(senderId) },
           { receiverId: Number(receiverId) },
           {
-            OR: [
-              { status: "PENDING" },
-              { status: "ACCEPTED" }, // Добавляем проверку для статуса "ACCEPTED"
-            ],
+            OR: [{ status: "PENDING" }, { status: "ACCEPTED" }],
           },
         ],
       },
@@ -41,8 +38,8 @@ export const createFriendRequest = async (
 ): Promise<void> => {
   try {
     // проверка на существование пользователей
-    const sender = await getUserById(Number(senderId));
-    const receiver = await getUserById(Number(receiverId));
+    await getUserById(Number(senderId));
+    await getUserById(Number(receiverId));
 
     const checkFriendRequest = await checkExistingFriendRequest(
       senderId,
@@ -63,8 +60,17 @@ export const createFriendRequest = async (
         receiverId: Number(receiverId),
         status: "PENDING",
       },
+      select: {
+        id: true,
+        sender: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
     });
-    next({ status: "success", data: { request: newFriendshipRequest } });
+    next(newFriendshipRequest);
   } catch (error) {
     next(error);
   }

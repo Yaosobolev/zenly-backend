@@ -82,19 +82,13 @@ export const acceptFriendRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
-          //! ДОРАБОТАТЬ, по итогу дубликат приходит
-          sendSocketToReceiver(
-            io,
-            result.receiverId,
-            result,
-            "friend-requests"
-          );
-
           sendSocketToReceiver(io, result.sender.id, result, "friend"); //! РЕАЛИЗОВАТЬ
+
+          const { receiverId, ...filteredResult } = result;
 
           res.status(200).json({
             message: "Заявка принята",
-            data: result,
+            data: filteredResult,
           });
         }
       }
@@ -122,7 +116,7 @@ export const rejectFriendRequest = async (
         } else {
           res.status(200).json({
             message: "Заявка отклонена",
-            request: result.data.request,
+            data: result,
           });
         }
       }

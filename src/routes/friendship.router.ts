@@ -13,7 +13,7 @@ const friendshipRouter = Router();
 friendshipRouter.post("/send-friend-request/:senderid", sendFriendRequest);
 friendshipRouter.post("/accept-request", acceptFriendRequest);
 friendshipRouter.post("/reject-request", rejectFriendRequest);
-friendshipRouter.get("/friends", getAllFriends);
+friendshipRouter.get("/friends/:userId", getAllFriends);
 friendshipRouter.get("/requests/:userId", getFriendRequest);
 
 export default friendshipRouter;

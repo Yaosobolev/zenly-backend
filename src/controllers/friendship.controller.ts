@@ -82,7 +82,8 @@ export const acceptFriendRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
-          sendSocketToReceiver(io, result.sender.id, result, "friend"); //! РЕАЛИЗОВАТЬ
+          sendSocketToReceiver(io, result.sender.id, result, "new-friend"); //! РЕАЛИЗОВАТЬ
+          sendSocketToReceiver(io, result.receiverId, result, "new-friend"); //! РЕАЛИЗОВАТЬ
 
           const { receiverId, ...filteredResult } = result;
 
@@ -114,9 +115,14 @@ export const rejectFriendRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
+          sendSocketToReceiver(io, result.sender.id, result, "delete-friend"); //! РЕАЛИЗОВАТЬ
+          sendSocketToReceiver(io, result.receiverId, result, "delete-friend"); //! РЕАЛИЗОВАТЬ
+
+          const { receiverId, ...filteredResult } = result;
+
           res.status(200).json({
             message: "Заявка отклонена",
-            data: result,
+            data: filteredResult,
           });
         }
       }
@@ -134,18 +140,22 @@ export const getAllFriends = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { id } = req.body;
+  const { userId } = req.params;
+  console.log(userId);
   try {
-    const updatedRequest = await getFriendsById(id, (result: any) => {
-      if (result instanceof Error) {
-        throw result;
-      } else {
-        res.status(200).json({
-          message: "Список друзей получен",
-          data: result,
-        });
+    const updatedRequest = await getFriendsById(
+      Number(userId),
+      (result: any) => {
+        if (result instanceof Error) {
+          throw result;
+        } else {
+          res.status(200).json({
+            message: "Список друзей получен",
+            data: result,
+          });
+        }
       }
-    });
+    );
   } catch (error) {
     console.error("Ошибка отправки заявки:", error);
     const statusCode = error.statusCode || 500;

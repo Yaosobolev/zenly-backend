@@ -73,7 +73,6 @@ export const acceptFriendRequest = async (
   res: Response
 ): Promise<void> => {
   const { requestId } = req.body;
-  console.log(requestId);
   try {
     const updatedRequest = await processFriendRequest(
       requestId,
@@ -82,14 +81,25 @@ export const acceptFriendRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
-          sendSocketToReceiver(io, result.sender.id, result, "new-friend"); //! РЕАЛИЗОВАТЬ
-          sendSocketToReceiver(io, result.receiverId, result, "new-friend"); //! РЕАЛИЗОВАТЬ
+          const { sender, ...resultForSender } = result;
+          const { receiver, ...resultForReceiver } = result;
 
-          const { receiverId, ...filteredResult } = result;
+          sendSocketToReceiver(
+            io,
+            result.sender.id,
+            resultForSender,
+            "new-friend"
+          ); //! РЕАЛИЗОВАТЬ
+          sendSocketToReceiver(
+            io,
+            result.receiver.id,
+            resultForReceiver,
+            "new-friend"
+          ); //! РЕАЛИЗОВАТЬ
 
           res.status(200).json({
             message: "Заявка принята",
-            data: filteredResult,
+            data: result,
           });
         }
       }
@@ -115,14 +125,25 @@ export const rejectFriendRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
-          sendSocketToReceiver(io, result.sender.id, result, "delete-friend"); //! РЕАЛИЗОВАТЬ
-          sendSocketToReceiver(io, result.receiverId, result, "delete-friend"); //! РЕАЛИЗОВАТЬ
+          const { sender, ...resultForSender } = result;
+          const { receiver, ...resultForReceiver } = result;
 
-          const { receiverId, ...filteredResult } = result;
+          sendSocketToReceiver(
+            io,
+            result.sender.id,
+            resultForSender,
+            "delete-friend"
+          ); //! РЕАЛИЗОВАТЬ
+          sendSocketToReceiver(
+            io,
+            result.receiver.id,
+            resultForReceiver,
+            "delete-friend"
+          ); //! РЕАЛИЗОВАТЬ
 
           res.status(200).json({
             message: "Заявка отклонена",
-            data: filteredResult,
+            data: result,
           });
         }
       }
@@ -141,7 +162,7 @@ export const getAllFriends = async (
   res: Response
 ): Promise<void> => {
   const { userId } = req.params;
-  console.log(userId);
+  console.log("getAllFriends", userId);
   try {
     const updatedRequest = await getFriendsById(
       Number(userId),

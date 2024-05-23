@@ -5,19 +5,22 @@ const userSocketMap: Record<string, string> = {};
 export const getSocketIdByUserId = async (
   userId: string
 ): Promise<string | null> => {
+  console.log("getSocketIdByUserId", userId);
   return userSocketMap[userId] || null;
 };
 
 // sendFriendRequestNotification
 
-export const sendSocketToReceiver = async (io, receiverId, result, address) => {
-  const socketId = await getSocketIdByUserId(receiverId);
+export const sendSocketToReceiver = async (io, id, result, address) => {
+  console.log("sendSocketToReceiver: id", id);
+  console.log("sendSocketToReceiver: result", result);
+  const socketId = await getSocketIdByUserId(id);
   if (socketId) {
     io.to(socketId).emit(address, {
       data: result,
     });
   } else {
-    console.log(`Нету идентификатора ${receiverId}`);
+    console.log(`Нету идентификатора ${id}`);
   }
 };
 

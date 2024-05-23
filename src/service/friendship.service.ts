@@ -103,7 +103,14 @@ export const processFriendRequest = async (
             location: true,
           },
         },
-        receiverId: true,
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            location: true,
+          },
+        },
+        // receiverId: true,
       },
     });
     next(updatedFriendshipRequest);

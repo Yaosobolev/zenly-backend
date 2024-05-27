@@ -5,12 +5,12 @@ export const sendMessageRequest = async (
   req: Request & any,
   res: Response
 ): Promise<void> => {
-  const { content } = req.body;
-  const { userId: receiverId } = req.params;
-  const senderId = req.user.id;
+  const { content, receiverId } = req.body;
+  const { userId: senderId } = req.params;
+
   try {
     const newFriendshipRequest = await sendMessage(
-      senderId,
+      Number(senderId),
       Number(receiverId),
       content,
       (result: any) => {
@@ -37,12 +37,16 @@ export const getMessageRequest = async (
   req: Request & any,
   res: Response
 ): Promise<void> => {
-  const { userId: userToChatId } = req.params;
-  const senderId = req.user.id;
+  const { userId: senderId } = req.params;
+  const { receiverId } = req.query;
+
+  console.log("senderId", senderId);
+  console.log("receiverId", receiverId);
+  console.log(req.query);
   try {
     const newFriendshipRequest = await getMessage(
-      senderId,
-      Number(userToChatId),
+      Number(senderId),
+      Number(receiverId),
 
       (result: any) => {
         if (result instanceof Error) {

@@ -41,17 +41,20 @@ export const sendMessage = async (
 };
 export const getMessage = async (
   senderId: number,
-  userToChatId: number,
+  receiverId: number,
   next: NextFunction
 ): Promise<void> => {
   try {
     const message = await messageClient.findMany({
       where: {
-        OR: [{ senderId: senderId }, { receiverId: userToChatId }],
+        OR: [
+          { senderId: senderId, receiverId: receiverId },
+          { senderId: receiverId, receiverId: senderId },
+        ],
       },
       include: {
-        sender: { select: { username: true } },
-        receiver: { select: { username: true } },
+        sender: { select: { username: true, id: true } },
+        receiver: { select: { username: true, id: true } },
       },
     });
 

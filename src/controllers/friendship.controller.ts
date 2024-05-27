@@ -162,7 +162,6 @@ export const getAllFriends = async (
   res: Response
 ): Promise<void> => {
   const { userId } = req.params;
-  console.log("getAllFriends", userId);
   try {
     const updatedRequest = await getFriendsById(
       Number(userId),

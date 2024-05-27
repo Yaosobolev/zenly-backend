@@ -5,15 +5,12 @@ const userSocketMap: Record<string, string> = {};
 export const getSocketIdByUserId = async (
   userId: string
 ): Promise<string | null> => {
-  console.log("getSocketIdByUserId", userId);
   return userSocketMap[userId] || null;
 };
 
 // sendFriendRequestNotification
 
 export const sendSocketToReceiver = async (io, id, result, address) => {
-  console.log("sendSocketToReceiver: id", id);
-  console.log("sendSocketToReceiver: result", result);
   const socketId = await getSocketIdByUserId(id);
   if (socketId) {
     io.to(socketId).emit(address, {
@@ -33,8 +30,6 @@ export const initSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log(`hello world! ${socket.id}`);
-
     const userId = Array.isArray(socket.handshake.query.userId)
       ? socket.handshake.query.userId[0]
       : socket.handshake.query.userId;

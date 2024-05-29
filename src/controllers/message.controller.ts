@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { sendMessage, getMessage } from "../service/message.service";
+import { sendSocketToReceiver } from "../socket";
+import { io } from "../index";
 
 export const sendMessageRequest = async (
   req: Request & any,
@@ -9,7 +11,7 @@ export const sendMessageRequest = async (
   const { userId: senderId } = req.params;
 
   try {
-    const newFriendshipRequest = await sendMessage(
+    const sendMessagepRequest = await sendMessage(
       Number(senderId),
       Number(receiverId),
       content,
@@ -17,6 +19,12 @@ export const sendMessageRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
+          const {
+            data: { request },
+          } = result;
+          console.log(request);
+
+          sendSocketToReceiver(io, request.receiverId, request, "new-messages");
           res.status(201).json({
             message: "Сообщение отправлено",
             request: result.data.request,
@@ -40,11 +48,8 @@ export const getMessageRequest = async (
   const { userId: senderId } = req.params;
   const { receiverId } = req.query;
 
-  console.log("senderId", senderId);
-  console.log("receiverId", receiverId);
-  console.log(req.query);
   try {
-    const newFriendshipRequest = await getMessage(
+    const getMessageRequest = await getMessage(
       Number(senderId),
       Number(receiverId),
 

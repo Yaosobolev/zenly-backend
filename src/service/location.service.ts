@@ -43,10 +43,31 @@ export const setLocation = async (
       select: {
         latitude: true,
         longitude: true,
-        user: true,
+        user: {
+          select: {
+            sentFriendRequests: {
+              where: {
+                status: "ACCEPTED",
+              },
+              select: {
+                receiverId: true,
+              },
+            },
+            receivedFriendRequests: {
+              where: {
+                status: "ACCEPTED",
+              },
+              select: {
+                senderId: true,
+              },
+            },
+            username: true,
+            id: true,
+          },
+        },
       },
     });
-    next({ status: "success", data: { request: locationWithUser } });
+    next({ status: "success", data: locationWithUser });
   } catch (error) {
     next(error);
   }

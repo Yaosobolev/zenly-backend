@@ -2,6 +2,17 @@ import { Server } from "socket.io";
 
 const userSocketMap: Record<string, string> = {};
 
+export const sendSocketToBothUsers = (
+  io,
+  senderId,
+  receiverId,
+  data,
+  event
+) => {
+  sendSocketToReceiver(io, senderId, data, event);
+  sendSocketToReceiver(io, receiverId, data, event);
+};
+
 export const getSocketIdByUserId = async (
   userId: string
 ): Promise<string | null> => {
@@ -12,6 +23,7 @@ export const getSocketIdByUserId = async (
 
 export const sendSocketToReceiver = async (io, id, result, address) => {
   const socketId = await getSocketIdByUserId(id);
+  console.log("socketId", socketId);
   if (socketId) {
     io.to(socketId).emit(address, {
       data: result,

@@ -22,7 +22,6 @@ export const sendMessageRequest = async (
           const {
             data: { request },
           } = result;
-          console.log(request);
 
           sendSocketToReceiver(io, request.receiverId, request, "new-messages");
           res.status(201).json({

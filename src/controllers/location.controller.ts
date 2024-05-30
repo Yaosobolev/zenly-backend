@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { setLocation, getLocation } from "../service/location.service";
+import { sendSocketToReceiver } from "../socket";
+import { io } from "../index";
 
 const locationClient = new PrismaClient().location;
 
@@ -100,10 +102,27 @@ export const setLocationRequest = async (
         if (result instanceof Error) {
           throw result;
         } else {
-          console.log("result location", result);
+          const { data } = result;
+
+          const receivers = [
+            ...data.user.sentFriendRequests,
+            ...data.user.receivedFriendRequests,
+          ].map((item) => item.receiverId || item.senderId);
+
+          const dataForReceiver = {
+            latitude: data.latitude,
+            longitude: data.longitude,
+            usename: data.user.username,
+            id: data.user.id,
+          };
+
+          receivers.forEach((receiver) => {
+            sendSocketToReceiver(io, receiver, dataForReceiver, "friend-geo");
+          });
+
           res.status(201).json({
             message: "Координаты установлены",
-            request: result.data.request,
+            request: result.data,
           });
         }
       }

@@ -89,13 +89,25 @@ export const acceptFriendRequest = async (
             result.sender.id,
             resultForSender,
             "new-friend"
-          ); //! РЕАЛИЗОВАТЬ
+          );
           sendSocketToReceiver(
             io,
             result.receiver.id,
             resultForReceiver,
             "new-friend"
-          ); //! РЕАЛИЗОВАТЬ
+          );
+          sendSocketToReceiver(
+            io,
+            result.sender.id,
+            resultForSender,
+            "new-geo-friend"
+          );
+          sendSocketToReceiver(
+            io,
+            result.receiver.id,
+            resultForReceiver,
+            "new-geo-friend"
+          );
 
           res.status(200).json({
             message: "Заявка принята",
@@ -128,18 +140,37 @@ export const rejectFriendRequest = async (
           const { sender, ...resultForSender } = result;
           const { receiver, ...resultForReceiver } = result;
 
+          console.log("result.sender.id", result.sender.id);
+          console.log("result.receiver.id", result.receiver.id);
+
+          console.log("resultForSender", resultForSender);
+          console.log("resultForReceiver", resultForReceiver);
+
           sendSocketToReceiver(
             io,
             result.sender.id,
             resultForSender,
             "delete-friend"
-          ); //! РЕАЛИЗОВАТЬ
+          );
           sendSocketToReceiver(
             io,
             result.receiver.id,
             resultForReceiver,
             "delete-friend"
-          ); //! РЕАЛИЗОВАТЬ
+          );
+
+          sendSocketToReceiver(
+            io,
+            result.sender.id,
+            resultForSender,
+            "delete-geo-friend"
+          );
+          sendSocketToReceiver(
+            io,
+            result.receiver.id,
+            resultForReceiver,
+            "delete-geo-friend"
+          );
 
           res.status(200).json({
             message: "Заявка отклонена",

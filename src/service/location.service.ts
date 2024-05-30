@@ -1,6 +1,5 @@
-import { FriendshipStatus, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { NextFunction } from "express";
-import { getUserById } from "./user.service";
 
 const locationClient = new PrismaClient().location;
 
@@ -38,7 +37,16 @@ export const setLocation = async (
         },
       });
     }
-    next({ status: "success", data: { request: existingLocation } });
+
+    const locationWithUser = await locationClient.findUnique({
+      where: { id: existingLocation.id },
+      select: {
+        latitude: true,
+        longitude: true,
+        user: true,
+      },
+    });
+    next({ status: "success", data: { request: locationWithUser } });
   } catch (error) {
     next(error);
   }

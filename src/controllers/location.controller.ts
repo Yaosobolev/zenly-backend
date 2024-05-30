@@ -2,105 +2,105 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { setLocation, getLocation } from "../service/location.service";
 
-setLocation;
-
 const locationClient = new PrismaClient().location;
 
 //getAllLocations
-export const getAllLocations = async (req, res) => {
-  try {
-    const allLocations = await locationClient.findMany();
+// export const getAllLocations = async (req, res) => {
+//   try {
+//     const allLocations = await locationClient.findMany();
 
-    res.status(200).json({ data: allLocations });
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     res.status(200).json({ data: allLocations });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-//getLocationById
-export const getLocationById = async (req, res) => {
-  try {
-    const locationId = Number(req.params.id);
-    const location = await locationClient.findUnique({
-      where: {
-        id: locationId,
-      },
-    });
+// //getLocationById
+// export const getLocationById = async (req, res) => {
+//   try {
+//     const locationId = Number(req.params.id);
+//     const location = await locationClient.findUnique({
+//       where: {
+//         id: locationId,
+//       },
+//     });
 
-    res.status(200).json({ data: location });
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     res.status(200).json({ data: location });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-//createLocation
-export const createLocation = async (req, res) => {
-  try {
-    const locationData = req.body;
-    const location = await locationClient.create({
-      data: {
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
-        user: {
-          connect: { id: locationData.userId },
-        },
-      },
-    });
+// //createLocation
+// export const createLocation = async (req, res) => {
+//   try {
+//     const locationData = req.body;
+//     const location = await locationClient.create({
+//       data: {
+//         latitude: locationData.latitude,
+//         longitude: locationData.longitude,
+//         user: {
+//           connect: { id: locationData.userId },
+//         },
+//       },
+//     });
 
-    res.status(201).json({ data: location });
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     res.status(201).json({ data: location });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-//updateLocation
-export const updateLocation = async (req, res) => {
-  try {
-    const locationId = Number(req.params.id);
-    const locationData = req.body;
-    const location = await locationClient.update({
-      where: {
-        id: locationId,
-      },
-      data: locationData,
-    });
+// //updateLocation
+// export const updateLocation = async (req, res) => {
+//   try {
+//     const locationId = Number(req.params.id);
+//     const locationData = req.body;
+//     const location = await locationClient.update({
+//       where: {
+//         id: locationId,
+//       },
+//       data: locationData,
+//     });
 
-    res.status(200).json({ data: location });
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     res.status(200).json({ data: location });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-//deleteLocation
-export const deleteLocation = async (req, res) => {
-  try {
-    const locationId = Number(req.params.id);
-    const location = await locationClient.delete({
-      where: {
-        id: locationId,
-      },
-    });
+// //deleteLocation
+// export const deleteLocation = async (req, res) => {
+//   try {
+//     const locationId = Number(req.params.id);
+//     const location = await locationClient.delete({
+//       where: {
+//         id: locationId,
+//       },
+//     });
 
-    res.status(200).json({ messsage: "successfully" });
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     res.status(200).json({ messsage: "successfully" });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 export const setLocationRequest = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { latitude, longitude, userId } = req.body;
+  const { latitude, longitude } = req.body;
+  const { userId } = req.params;
   try {
     const location = await setLocation(
       latitude,
       longitude,
-      userId,
+      Number(userId),
       (result: any) => {
         if (result instanceof Error) {
           throw result;
         } else {
+          console.log("result location", result);
           res.status(201).json({
             message: "Координаты установлены",
             request: result.data.request,

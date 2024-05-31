@@ -66,9 +66,38 @@ export const getLocationRequest = async (
       if (result instanceof Error) {
         throw result;
       } else {
+        const {
+          data: { user },
+        } = result;
+
+        // const friends = [
+        //   ...user.sentFriendRequests.map((item) => ({ data: item.receiver })),
+        //   ...user.receivedFriendRequests.map((item) => ({
+        //     data: item.sender,
+        //   })),
+        // ];
+
+        const friends = [
+          ...user.sentFriendRequests.map((item) => ({
+            data: {
+              id: item.receiver.id,
+              username: item.receiver.username,
+              latitude: item.receiver.location?.latitude,
+              longitude: item.receiver.location?.longitude,
+            },
+          })),
+          ...user.receivedFriendRequests.map((item) => ({
+            data: {
+              id: item.sender.id,
+              username: item.sender.username,
+              latitude: item.sender.location?.latitude,
+              longitude: item.sender.location?.longitude,
+            },
+          })),
+        ];
+        console.log(friends);
         res.status(200).json({
-          message: "Координаты получены",
-          request: result.data.request,
+          request: friends,
         });
       }
     });

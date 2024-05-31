@@ -83,6 +83,50 @@ export const getLocation = async (
       where: {
         userId: convertToNumber,
       },
+      select: {
+        user: {
+          select: {
+            sentFriendRequests: {
+              where: {
+                status: "ACCEPTED",
+              },
+              select: {
+                receiver: {
+                  select: {
+                    id: true,
+                    username: true,
+                    location: {
+                      select: {
+                        latitude: true,
+                        longitude: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            receivedFriendRequests: {
+              where: {
+                status: "ACCEPTED",
+              },
+              select: {
+                sender: {
+                  select: {
+                    id: true,
+                    username: true,
+                    location: {
+                      select: {
+                        latitude: true,
+                        longitude: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!location) {
@@ -91,7 +135,7 @@ export const getLocation = async (
       throw error;
     }
 
-    next({ status: "success", data: { request: location } });
+    next({ status: "success", data: location });
   } catch (error) {
     next(error);
   }

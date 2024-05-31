@@ -6,11 +6,12 @@ export const sendSocketToBothUsers = (
   io,
   senderId,
   receiverId,
-  data,
+  dataForSender,
+  dataForReceiver,
   event
 ) => {
-  sendSocketToReceiver(io, senderId, data, event);
-  sendSocketToReceiver(io, receiverId, data, event);
+  sendSocketToReceiver(io, senderId, dataForSender, event);
+  sendSocketToReceiver(io, receiverId, dataForReceiver, event);
 };
 
 export const getSocketIdByUserId = async (
@@ -18,8 +19,6 @@ export const getSocketIdByUserId = async (
 ): Promise<string | null> => {
   return userSocketMap[userId] || null;
 };
-
-// sendFriendRequestNotification
 
 export const sendSocketToReceiver = async (io, id, result, address) => {
   const socketId = await getSocketIdByUserId(id);
@@ -57,7 +56,3 @@ export const initSocket = (server) => {
 
   return io;
 };
-
-// export const selectSocket = (id, socket) => {
-//   return id === socket.handshake.query.userId ? socket.id : null;
-// };

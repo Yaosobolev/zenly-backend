@@ -36,18 +36,3 @@ export const validateLoginInput = (
 
   next();
 };
-
-// export const isAuthenticate = (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   // const tokenAccess = req.cookies.accessToken;
-//   const refreshToken = req.cookies.refreshToken;
-
-//   if (!refreshToken) {
-//     return res.status(401).json({ message: "Требуется аутентификация" });
-//   }
-
-//   next();
-// };

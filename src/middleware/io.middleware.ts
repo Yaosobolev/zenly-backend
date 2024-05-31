@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+// import { Request, Response, NextFunction } from "express";
 
-export const ioMiddleware = (io) => (req, res, next) => {
-  req.io = io;
-  next();
-};
+// export const ioMiddleware = (io) => (req, res, next) => {
+//   req.io = io;
+//   next();
+// };
 
-// module.exports = ioMiddleware;
+// // module.exports = ioMiddleware;

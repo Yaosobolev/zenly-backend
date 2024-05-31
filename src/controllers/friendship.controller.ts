@@ -6,7 +6,7 @@ import {
 } from "../service/friendship.service";
 import { getFriendsById, getFriendRequests } from "../service/user.service";
 import { io } from "../index";
-import { sendSocketToReceiver } from "../socket";
+import { sendSocketToBothUsers, sendSocketToReceiver } from "../socket";
 
 export const sendFriendRequest = async (
   req: Request,
@@ -84,27 +84,19 @@ export const acceptFriendRequest = async (
           const { sender, ...resultForSender } = result;
           const { receiver, ...resultForReceiver } = result;
 
-          sendSocketToReceiver(
+          sendSocketToBothUsers(
             io,
             result.sender.id,
-            resultForSender,
-            "new-friend"
-          );
-          sendSocketToReceiver(
-            io,
             result.receiver.id,
+            resultForSender,
             resultForReceiver,
             "new-friend"
           );
-          sendSocketToReceiver(
+          sendSocketToBothUsers(
             io,
             result.sender.id,
-            resultForSender,
-            "new-geo-friend"
-          );
-          sendSocketToReceiver(
-            io,
             result.receiver.id,
+            resultForSender,
             resultForReceiver,
             "new-geo-friend"
           );
@@ -140,34 +132,19 @@ export const rejectFriendRequest = async (
           const { sender, ...resultForSender } = result;
           const { receiver, ...resultForReceiver } = result;
 
-          console.log("result.sender.id", result.sender.id);
-          console.log("result.receiver.id", result.receiver.id);
-
-          console.log("resultForSender", resultForSender);
-          console.log("resultForReceiver", resultForReceiver);
-
-          sendSocketToReceiver(
+          sendSocketToBothUsers(
             io,
             result.sender.id,
-            resultForSender,
-            "delete-friend"
-          );
-          sendSocketToReceiver(
-            io,
             result.receiver.id,
+            resultForSender,
             resultForReceiver,
             "delete-friend"
           );
-
-          sendSocketToReceiver(
+          sendSocketToBothUsers(
             io,
             result.sender.id,
-            resultForSender,
-            "delete-geo-friend"
-          );
-          sendSocketToReceiver(
-            io,
             result.receiver.id,
+            resultForSender,
             resultForReceiver,
             "delete-geo-friend"
           );

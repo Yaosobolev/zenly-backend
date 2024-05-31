@@ -10,6 +10,8 @@ import {
 
 const userRouter = Router();
 
+// Для административной панели
+
 userRouter.get("/", getAllUsers);
 userRouter.get("/:id", getUserById);
 userRouter.post("/", createUser);
